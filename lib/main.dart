@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'theme/asumi_theme.dart';
-import 'i18n/app_localizations.dart';
-import 'providers/providers.dart';
+import 'ui/core/theme/asumi_theme.dart';
+import 'ui/core/i18n/app_localizations.dart';
+import 'ui/core/view_models/theme_provider.dart';
+import 'ui/core/view_models/locale_provider.dart';
+import 'ui/features/auth/view_models/auth_provider.dart';
 import 'router/app_router.dart';
 
 void main() {

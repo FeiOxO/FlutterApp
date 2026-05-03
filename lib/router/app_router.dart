@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../screens/login_screen.dart';
-import '../screens/register_screen.dart';
-import '../screens/forgot_password_screen.dart';
-import '../screens/dashboard_screen.dart';
+import '../ui/features/auth/view_models/auth_provider.dart';
+import '../ui/features/auth/views/login_screen.dart';
+import '../ui/features/auth/views/register_screen.dart';
+import '../ui/features/auth/views/forgot_password_screen.dart';
+import '../ui/features/dashboard/views/dashboard_screen.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
