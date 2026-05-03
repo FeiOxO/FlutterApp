@@ -20,18 +20,29 @@ class ImageItem {
   });
 
   factory ImageItem.fromJson(Map<String, dynamic> json) {
-    return ImageItem(
-      id: json['id'] as String,
-      userId: json['user_id'] as String? ?? '',
-      filename: json['filename'] as String? ?? '',
-      originalName: json['original_name'] as String? ?? '',
-      url: json['url'] as String,
-      isDefault: json['is_default'] as bool? ?? false,
-      collection: json['collection'] as String?,
-      createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'] as String)
-          : null,
-    );
+    return switch (json) {
+      {
+        'id': String id,
+        'user_id': String? userId,
+        'filename': String? filename,
+        'original_name': String? originalName,
+        'url': String url,
+        'is_default': bool? isDefault,
+        'collection': String? collection,
+        'created_at': String? createdAtStr,
+      } =>
+        ImageItem(
+          id: id,
+          userId: userId ?? '',
+          filename: filename ?? '',
+          originalName: originalName ?? '',
+          url: url,
+          isDefault: isDefault ?? false,
+          collection: collection,
+          createdAt: createdAtStr != null ? DateTime.tryParse(createdAtStr) : null,
+        ),
+      _ => throw const FormatException('Failed to parse ImageItem'),
+    };
   }
 
   Map<String, dynamic> toJson() => {

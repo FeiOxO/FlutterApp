@@ -16,18 +16,25 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'] as String,
-      username: json['username'] as String,
-      email: json['email'] as String? ?? '',
-      avatar: json['avatar'] as String?,
-      createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'] as String)
-          : null,
-      updatedAt: json['updated_at'] != null
-          ? DateTime.tryParse(json['updated_at'] as String)
-          : null,
-    );
+    return switch (json) {
+      {
+        'id': String id,
+        'username': String username,
+        'email': String email,
+        'avatar': String? avatar,
+        'created_at': String? createdAtStr,
+        'updated_at': String? updatedAtStr,
+      } =>
+        User(
+          id: id,
+          username: username,
+          email: email,
+          avatar: avatar,
+          createdAt: createdAtStr != null ? DateTime.tryParse(createdAtStr) : null,
+          updatedAt: updatedAtStr != null ? DateTime.tryParse(updatedAtStr) : null,
+        ),
+      _ => throw const FormatException('Failed to parse User'),
+    };
   }
 
   Map<String, dynamic> toJson() => {
