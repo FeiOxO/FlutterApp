@@ -4,10 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/i18n/app_localizations.dart';
 import '../view_models/auth_provider.dart';
 import '../../../core/view_models/theme_provider.dart';
-import '../../../core/view_models/locale_provider.dart';
 import '../../../core/theme/asumi_theme.dart';
-import 'register_screen.dart';
-import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

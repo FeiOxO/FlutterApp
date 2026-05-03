@@ -1,14 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/i18n/app_localizations.dart';
 import '../../../../data/models/image_item.dart';
 import '../../auth/view_models/auth_provider.dart';
 import '../../../core/view_models/theme_provider.dart';
-import '../../../core/view_models/locale_provider.dart';
 import '../../../../data/services/image_service.dart';
 import '../../../core/theme/asumi_theme.dart';
 
@@ -90,7 +87,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _pickAndUpload() async {
     final file = await _picker.pickImage(
       source: ImageSource.gallery,
-      maxFileSize: 5 * 1024 * 1024, // 5MB
     );
     if (file == null) return;
 
@@ -193,7 +189,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // Pick and set as avatar
     final file = await _picker.pickImage(
       source: ImageSource.gallery,
-      maxFileSize: 5 * 1024 * 1024,
     );
     if (file == null) return;
     try {
