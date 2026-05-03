@@ -1,0 +1,77 @@
+version: '1.0'
+name: login-flutter-apk
+displayName: Flutter APK 打包
+triggers:
+  trigger: manual
+stages:
+  - name: build
+    displayName: 构建 APK
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@gradle
+        name: build_apk
+        displayName: Flutter APK 构建
+        jdkVersion: '17'
+        gradleVersion: '8.10'
+        commands:
+          - |
+            set -e
+
+            # 如果 GITEE_WORKSPACE 未设置，fallback 到当前目录
+            WORKSPACE="${GITEE_WORKSPACE:-.}"
+            cd "$WORKSPACE"
+
+            echo "=== 1. 配置国内镜像源 ==="
+            export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+            export PUB_HOSTED_URL=https://pub.flutter-io.cn
+
+            echo "=== 2. 安装 Flutter SDK（若未缓存） ==="
+            FLUTTER_DIR="/opt/flutter"
+            if [ ! -d "$FLUTTER_DIR" ]; then
+              echo "下载 Flutter SDK..."
+              git clone --depth 1 -b stable \
+                https://github.com/flutter/flutter.git "$FLUTTER_DIR"
+            else
+              echo "Flutter SDK 已缓存，跳过下载"
+            fi
+            export PATH="$FLUTTER_DIR/bin:$PATH"
+
+            echo "=== 3. 安装 Android SDK 组件 ==="
+            # Flutter 需要 Android SDK，但 build@gradle 可能已提供部分环境
+            # 确保 sdkmanager 可用
+            if [ -n "$ANDROID_HOME" ] && [ -d "$ANDROID_HOME" ]; then
+              echo "ANDROID_HOME=$ANDROID_HOME"
+              # 安装需要的组件
+              yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+                "platforms;android-34" \
+                "build-tools;34.0.0" \
+                "platform-tools" \
+                --sdk_root="$ANDROID_HOME" 2>/dev/null || true
+            fi
+
+            echo "=== 4. 接受 Android 许可 ==="
+            flutter config --android-sdk "$ANDROID_HOME" 2>/dev/null || true
+            yes | flutter doctor --android-licenses 2>/dev/null || true
+
+            echo "=== 5. 获取依赖 ==="
+            flutter pub get
+
+            echo "=== 6. 构建 APK ==="
+            flutter build apk --release
+
+            echo "=== 7. 构建完成 ==="
+            ls -la build/app/outputs/flutter-apk/
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./build/app/outputs/flutter-apk/
+        caches:
+          - /opt/flutter
+          - /root/.pub-cache
+          - /root/.gradle/caches
+          - ~/.android
+        notify: []
+        strategy:
+          retry: '0'
