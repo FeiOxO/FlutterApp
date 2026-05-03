@@ -1,0 +1,61 @@
+{
+  "auth": {
+    "login": "ログイン",
+    "register": "新規登録",
+    "forgotPassword": "パスワードをお忘れの方",
+    "username": "ユーザー名",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "confirmPassword": "パスワード（確認）",
+    "passwordHint": "パスワードは6文字以上、英字と数字を含む必要があります",
+    "sendResetLink": "リセットリンクを送信",
+    "welcomeBack": "おかえりなさい",
+    "noAccount": "アカウントをお持ちでない方？",
+    "hasAccount": "すでにアカウントをお持ちの方？",
+    "backToLogin": "ログインに戻る",
+    "registerNow": "新規登録",
+    "loginNow": "ログイン"
+  },
+  "dashboard": {
+    "title": "錦明日海",
+    "logout": "ログアウト",
+    "addImage": "画像を追加",
+    "all": "すべて",
+    "gallery": "ギャラリー",
+    "createCollection": "新規コレクション",
+    "collectionName": "コレクション名",
+    "noCategory": "未分類",
+    "deleteConfirm": "この画像を削除してもよろしいですか？",
+    "setAsAvatar": "アバターに設定",
+    "clearAvatar": "アバターをクリア",
+    "changeAvatar": "アバター変更",
+    "uploading": "アップロード中…",
+    "morning": "おはようございます",
+    "noon": "こんにちは",
+    "afternoon": "こんにちは",
+    "evening": "こんばんは",
+    "night": "夜更けですね"
+  },
+  "common": {
+    "create": "作成",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "confirm": "確認",
+    "error": "エラー",
+    "success": "成功",
+    "loading": "読み込み中…",
+    "retry": "再試行"
+  },
+  "labels": {
+    "asumi": "錦明日海",
+    "asumi-cg": "錦明日海 CG",
+    "sister": "妹",
+    "sister-cg": "妹 CG",
+    "妃爱": "妃愛"
+  },
+  "messages": {
+    "resetSent": "リセットリンクをメールで送信しました",
+    "registerSuccess": "登録完了！ログインページに移動します",
+    "networkError": "ネットワーク接続に失敗しました"
+  }
+}

@@ -1,0 +1,27 @@
+# Flutter
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+.idea/
+.dart_tool/
+.packages
+.pub/
+build/
+pubspec.lock
+
+# Generated
+*.g.dart
+*.freezed.dart
+
+# IDE
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Native
+android/.gradle/
+android/app/build/
+ios/.symlinks/
+ios/Pods/
+ios/build/

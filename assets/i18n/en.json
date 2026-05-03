@@ -1,0 +1,61 @@
+{
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "forgotPassword": "Forgot Password",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "passwordHint": "At least 6 chars, must include letters and digits",
+    "sendResetLink": "Send Reset Link",
+    "welcomeBack": "Welcome Back",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "backToLogin": "Back to Login",
+    "registerNow": "Register Now",
+    "loginNow": "Login"
+  },
+  "dashboard": {
+    "title": "Nishiki Asumi",
+    "logout": "Logout",
+    "addImage": "Add Image",
+    "all": "All",
+    "gallery": "Gallery",
+    "createCollection": "New Collection",
+    "collectionName": "Collection Name",
+    "noCategory": "Uncategorized",
+    "deleteConfirm": "Delete this image?",
+    "setAsAvatar": "Set as Avatar",
+    "clearAvatar": "Clear Avatar",
+    "changeAvatar": "Change Avatar",
+    "uploading": "Uploading…",
+    "morning": "Good Morning",
+    "noon": "Good Afternoon",
+    "afternoon": "Good Afternoon",
+    "evening": "Good Evening",
+    "night": "Late Night"
+  },
+  "common": {
+    "create": "Create",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading…",
+    "retry": "Retry"
+  },
+  "labels": {
+    "asumi": "Asumi",
+    "asumi-cg": "Asumi CG",
+    "sister": "Sister",
+    "sister-cg": "Sister CG",
+    "妃爱": "Hibiki Ai"
+  },
+  "messages": {
+    "resetSent": "Reset link sent to your email",
+    "registerSuccess": "Registration successful! Redirecting to login…",
+    "networkError": "Network error. Please check your connection."
+  }
+}
