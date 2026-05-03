@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../i18n/app_localizations.dart';
 import '../providers/providers.dart';
@@ -37,7 +38,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           backgroundColor: AsumiTheme.emerald400,
         ),
       );
-      Navigator.of(context).pop();
+      context.go('/');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -143,7 +144,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         // Back to login
                         GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
+                          onTap: () => context.go('/'),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../i18n/app_localizations.dart';
 import '../providers/providers.dart';
@@ -139,15 +140,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 8),
 
                         // Forgot password
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
-                              );
-                            },
-                            child: Text(
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () => context.go('/forgot-password'),
+                              child: Text(
                               t.forgotPassword,
                               style: TextStyle(
                                 color: AsumiTheme.rose,
@@ -197,11 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                                 GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                                    );
-                                  },
+                                  onTap: () => context.go('/register'),
                                   child: Text(
                                     t.register,
                                     style: const TextStyle(

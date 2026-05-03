@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'theme/asumi_theme.dart';
 import 'i18n/app_localizations.dart';
 import 'providers/providers.dart';
-import 'screens/screens.dart';
+import 'router/app_router.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,7 @@ class LoginFlutterApp extends StatelessWidget {
     final themeProvider = context.watch<ThemeProvider>();
     final localeProvider = context.watch<LocaleProvider>();
 
-    return MaterialApp(
+    return MaterialApp.router(
       title: '锦亚澄 ✦ 登录',
       debugShowCheckedModeBanner: false,
       theme: AsumiTheme.lightTheme,
@@ -42,27 +42,7 @@ class LoginFlutterApp extends StatelessWidget {
       localizationsDelegates: const [
         AppLocalizations.delegate,
       ],
-      home: const AuthGate(),
+      routerConfig: createAppRouter(),
     );
-  }
-}
-
-class AuthGate extends StatelessWidget {
-  const AuthGate({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
-    if (auth.isLoading && !auth.isLoggedIn) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    if (auth.isLoggedIn) {
-      return const DashboardScreen();
-    }
-    return const LoginScreen();
   }
 }

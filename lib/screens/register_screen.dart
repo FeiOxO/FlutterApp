@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../i18n/app_localizations.dart';
 import '../providers/providers.dart';
 import '../theme/asumi_theme.dart';
-import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -49,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backgroundColor: AsumiTheme.emerald400,
         ),
       );
-      Navigator.of(context).pop();
+      context.go('/');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -107,11 +107,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Language pills
                         _LanguagePills(locale: locale),
                         const SizedBox(height: 24),
-
-                        // Logo
                         const _Logo(),
                         const SizedBox(height: 16),
                         Text(
@@ -122,8 +119,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                         ),
                         const SizedBox(height: 32),
-
-                        // Username
                         TextFormField(
                           controller: _usernameController,
                           decoration: InputDecoration(
@@ -134,8 +129,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               v == null || v.trim().length < 2 ? '用户名至少2个字符' : null,
                         ),
                         const SizedBox(height: 16),
-
-                        // Email
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -150,8 +143,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-
-                        // Password
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
@@ -171,8 +162,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           validator: _validatePassword,
                         ),
                         const SizedBox(height: 16),
-
-                        // Confirm password
                         TextFormField(
                           controller: _confirmPasswordController,
                           obscureText: _obscureConfirm,
@@ -195,8 +184,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         const SizedBox(height: 24),
-
-                        // Register button
                         SizedBox(
                           width: double.infinity,
                           height: 52,
@@ -222,8 +209,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
-
-                        // Login link
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -232,7 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.of(context).pop(),
+                              onTap: () => context.go('/'),
                               child: Text(
                                 t.login,
                                 style: const TextStyle(
@@ -331,6 +316,40 @@ class _Logo extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// Reused from login_screen.dart — kept here for self-contained references
+class AuthCard extends StatelessWidget {
+  final Widget child;
+
+  const AuthCard({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: isDark
+            ? const Color(0xFF1E0A3C).withValues(alpha: 0.75)
+            : Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark
+              ? AsumiTheme.lavender.withValues(alpha: 0.15)
+              : AsumiTheme.roseLight.withValues(alpha: 0.2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.04),
+            blurRadius: 40,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }
