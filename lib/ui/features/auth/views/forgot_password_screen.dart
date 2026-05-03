@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../core/i18n/app_localizations.dart';
+import '../../../core/i18n/app_localizations.dart';
 import '../view_models/auth_provider.dart';
-import '../../core/view_models/theme_provider.dart';
-import '../../core/theme/asumi_theme.dart';
+import '../../../core/view_models/theme_provider.dart';
+import '../../../core/theme/asumi_theme.dart';
 import 'login_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {

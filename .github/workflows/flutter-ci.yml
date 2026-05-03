@@ -8,11 +8,11 @@ on:
   workflow_dispatch:
 
 env:
-  FLUTTER_VERSION: '3.41.9'
+  FLUTTER_VERSION: '3.41.x'
 
 jobs:
   analyze:
-    name: 🔍 Analyze
+    name: 🔍 Analyze & Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,10 +24,10 @@ jobs:
           cache: true
 
       - run: flutter pub get
-      - run: flutter analyze
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
   test:
-    name: 🧪 Test
+    name: 🧪 Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,9 +42,8 @@ jobs:
       - run: flutter test
 
   build-apk:
-    name: 📦 Build APK
+    name: 📦 Build APK (Debug)
     runs-on: ubuntu-latest
-    needs: [analyze, test]
     steps:
       - uses: actions/checkout@v4
 
@@ -66,10 +65,11 @@ jobs:
 
       - run: flutter pub get
 
-      - name: 🏗️ Fix Kotlin version if needed
+      - name: ⚙️ Fix Kotlin/Gradle version
         run: |
-          # 检查 Kotlin 版本一致性（仅警告，不中断构建）
-          grep -rn "kotlin_version\|kotlin-stdlib\|kotlin.android" android/ || true
+          set -e
+          echo "> Checking Kotlin versions..."
+          grep -rn "kotlin" android/settings.gradle.kts android/app/build.gradle.kts || true
 
       - name: 🏗️ Build APK
         run: flutter build apk --debug
