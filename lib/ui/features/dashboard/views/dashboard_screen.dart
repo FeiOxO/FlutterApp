@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/i18n/app_localizations.dart';
+import '../../../core/i18n/app_localizations.dart';
 import '../../../../data/models/image_item.dart';
 import '../../auth/view_models/auth_provider.dart';
-import '../../../../core/view_models/theme_provider.dart';
-import '../../../../core/view_models/locale_provider.dart';
+import '../../../core/view_models/theme_provider.dart';
+import '../../../core/view_models/locale_provider.dart';
 import '../../../../data/services/image_service.dart';
-import '../../../../core/theme/asumi_theme.dart';
+import '../../../core/theme/asumi_theme.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
