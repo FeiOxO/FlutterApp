@@ -33,7 +33,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AppLocalizations.of(context).get('messages.resetSent'),
+            AppLocalizations.of(context).msgResetSent,
           ),
           backgroundColor: AsumiTheme.emerald400,
         ),

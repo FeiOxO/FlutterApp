@@ -15,67 +15,84 @@ class AppLocalizations {
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
 
+  /// Material/Cupertino 系统本地化委托
+  static const List<LocalizationsDelegate<dynamic>> systemDelegates = [
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ];
+
+  static const List<Locale> supportedLocales = [
+    Locale('zh'),
+    Locale('ja'),
+    Locale('en'),
+  ];
+
   Future<void> load() async {
     final langCode = locale.languageCode;
-    final jsonString = await rootBundle.loadString(
-      'assets/i18n/$langCode.json',
-    );
+    String jsonString;
+    try {
+      jsonString = await rootBundle.loadString(
+        'assets/i18n/$langCode.json',
+      );
+    } catch (_) {
+      jsonString = await rootBundle.loadString('assets/i18n/zh.json');
+    }
     _strings = json.decode(jsonString) as Map<String, dynamic>;
   }
 
-  String get(String key, {List<String>? args}) {
-    final keys = key.split('.');
-    dynamic value = _strings;
-    for (final k in keys) {
-      value = (value as Map<String, dynamic>)[k];
-      if (value == null) return key;
-    }
-    if (value is String) {
-      if (args != null) {
-        for (int i = 0; i < args.length; i++) {
-          value = value.replaceAll('{$i}', args[i]);
-        }
-      }
-      return value;
-    }
-    return key;
+  String get(String key) {
+    return _strings[key] as String? ?? key;
   }
 
-  // Convenience getters
-  String get login => get('auth.login');
-  String get register => get('auth.register');
-  String get forgotPassword => get('auth.forgotPassword');
-  String get username => get('auth.username');
-  String get email => get('auth.email');
-  String get password => get('auth.password');
-  String get confirmPassword => get('auth.confirmPassword');
-  String get sendResetLink => get('auth.sendResetLink');
-  String get welcomeBack => get('auth.welcomeBack');
-  String get noAccount => get('auth.noAccount');
-  String get hasAccount => get('auth.hasAccount');
-  String get backToLogin => get('auth.backToLogin');
+  // ===== Convenience getters =====
+  String get login => get('login');
+  String get register => get('register');
+  String get forgotPassword => get('forgotPassword');
+  String get username => get('username');
+  String get email => get('email');
+  String get password => get('password');
+  String get confirmPassword => get('confirmPassword');
+  String get sendResetLink => get('sendResetLink');
+  String get welcomeBack => get('welcomeBack');
+  String get noAccount => get('noAccount');
+  String get hasAccount => get('hasAccount');
+  String get backToLogin => get('backToLogin');
+  String get logout => get('logout');
+  String get addImage => get('addImage');
+  String get createCollection => get('createCollection');
+  String get all => get('all');
+  String get gallery => get('gallery');
+  String get noCategory => get('noCategory');
+  String get deleteConfirm => get('deleteConfirm');
+  String get setAsAvatar => get('setAsAvatar');
+  String get clearAvatar => get('clearAvatar');
+  String get changeAvatar => get('changeAvatar');
+  String get uploading => get('uploading');
+  String get create => get('commonCreate');
+  String get cancel => get('commonCancel');
+  String get delete => get('commonDelete');
+  String get dashboardTitle => get('dashboardTitle');
+  String get collectionName => get('collectionName');
 
-  String get logout => get('dashboard.logout');
-  String get addImage => get('dashboard.addImage');
-  String get createCollection => get('dashboard.createCollection');
-  String get all => get('dashboard.all');
-  String get gallery => get('dashboard.gallery');
-  String get noCategory => get('dashboard.noCategory');
-  String get deleteConfirm => get('dashboard.deleteConfirm');
-  String get setAsAvatar => get('dashboard.setAsAvatar');
-  String get clearAvatar => get('dashboard.clearAvatar');
-  String get changeAvatar => get('dashboard.changeAvatar');
-  String get uploading => get('dashboard.uploading');
-  String get create => get('common.create');
-  String get cancel => get('common.cancel');
-  String get delete => get('common.delete');
+  String get greetingMorning => get('greetingMorning');
+  String get greetingNoon => get('greetingNoon');
+  String get greetingAfternoon => get('greetingAfternoon');
+  String get greetingEvening => get('greetingEvening');
+  String get greetingNight => get('greetingNight');
+
+  String get msgResetSent => get('msgResetSent');
+  String get msgRegisterSuccess => get('msgRegisterSuccess');
+  String get msgNetworkError => get('msgNetworkError');
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) => ['zh', 'ja', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      ['zh', 'ja', 'en'].contains(locale.languageCode);
 
   @override
   Future<AppLocalizations> load(Locale locale) async {

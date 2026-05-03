@@ -211,11 +211,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _getGreeting() {
     final hour = DateTime.now().hour;
     final t = AppLocalizations.of(context);
-    if (hour >= 5 && hour < 9) return t.get('dashboard.morning');
-    if (hour >= 9 && hour < 13) return t.get('dashboard.noon');
-    if (hour >= 13 && hour < 17) return t.get('dashboard.afternoon');
-    if (hour >= 17 && hour < 22) return t.get('dashboard.evening');
-    return t.get('dashboard.night');
+    if (hour >= 5 && hour < 9) return t.greetingMorning;
+    if (hour >= 9 && hour < 13) return t.greetingNoon;
+    if (hour >= 13 && hour < 17) return t.greetingAfternoon;
+    if (hour >= 17 && hour < 22) return t.greetingEvening;
+    return t.greetingNight;
   }
 
   @override
@@ -326,7 +326,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(width: 10),
           Text(
-            t.get('dashboard.title'),
+            t.dashboardTitle,
             style: TextStyle(
               fontFamily: AsumiTheme.displayFont,
               fontSize: 17,
@@ -520,7 +520,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           controller: controller,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: t.get('dashboard.collectionName'),
+            hintText: t.collectionName,
           ),
         ),
         actions: [
@@ -530,7 +530,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(controller.text.trim()),
-            child: Text(t.get('common.create')),
+            child: Text(t.create),
           ),
         ],
       ),

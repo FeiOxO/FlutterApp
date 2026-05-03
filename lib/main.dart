@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'theme/asumi_theme.dart';
 import 'i18n/app_localizations.dart';
@@ -34,13 +35,12 @@ class LoginFlutterApp extends StatelessWidget {
       darkTheme: AsumiTheme.darkTheme,
       themeMode: themeProvider.themeMode,
       locale: localeProvider.locale,
-      supportedLocales: const [
-        Locale('zh'),
-        Locale('ja'),
-        Locale('en'),
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: createAppRouter(),
     );

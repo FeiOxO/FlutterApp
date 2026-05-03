@@ -45,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context).get('messages.registerSuccess')),
+          content: Text(AppLocalizations.of(context).msgRegisterSuccess),
           backgroundColor: AsumiTheme.emerald400,
         ),
       );

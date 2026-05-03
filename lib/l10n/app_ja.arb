@@ -1,4 +1,5 @@
 {
+  "@@locale": "ja",
   "login": "ログイン",
   "register": "新規登録",
   "forgotPassword": "パスワードをお忘れの方",
