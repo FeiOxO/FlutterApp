@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
   static const String _baseUrlKey = 'api_base_url';
-  static const String _defaultBaseUrl = 'https://www.feioxo.site';
+  static const String _defaultBaseUrl = 'https://feioxo.site';
 
   late final Dio _dio;
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
