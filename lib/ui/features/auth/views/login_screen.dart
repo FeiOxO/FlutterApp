@@ -44,12 +44,11 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(auth.error ?? '登录失败'),
-          backgroundColor: AsumiTheme.rose500,
-        ),
-      );
-    }
+      SnackBar(
+        content: Text(auth.error ?? '登录失败'),
+        backgroundColor: AsumiTheme.rose500,
+      ),
+    );
   }
 
   @override
