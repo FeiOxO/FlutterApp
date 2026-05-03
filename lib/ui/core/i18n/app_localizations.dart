@@ -60,6 +60,7 @@ class AppLocalizations {
   String get hasAccount => get('hasAccount');
   String get backToLogin => get('backToLogin');
   String get logout => get('logout');
+  String get logoutConfirm => get('logoutConfirm');
   String get addImage => get('addImage');
   String get createCollection => get('createCollection');
   String get all => get('all');
@@ -72,6 +73,7 @@ class AppLocalizations {
   String get uploading => get('uploading');
   String get create => get('commonCreate');
   String get cancel => get('commonCancel');
+  String get confirm => get('commonConfirm');
   String get delete => get('commonDelete');
   String get dashboardTitle => get('dashboardTitle');
   String get collectionName => get('collectionName');
@@ -85,6 +87,7 @@ class AppLocalizations {
   String get msgResetSent => get('msgResetSent');
   String get msgRegisterSuccess => get('msgRegisterSuccess');
   String get msgNetworkError => get('msgNetworkError');
+  String get commonLoading => get('commonLoading');
 }
 
 class _AppLocalizationsDelegate

@@ -60,6 +60,9 @@ class GenLocalizationsZh extends GenLocalizations {
   String get logout => '退出';
 
   @override
+  String get logoutConfirm => '确定要退出当前账号吗？';
+
+  @override
   String get addImage => '添加图片';
 
   @override

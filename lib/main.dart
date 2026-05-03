@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'ui/core/theme/asumi_theme.dart';
@@ -22,13 +23,23 @@ void main() {
   );
 }
 
-class LoginFlutterApp extends StatelessWidget {
+class LoginFlutterApp extends StatefulWidget {
   const LoginFlutterApp({super.key});
 
   @override
+  State<LoginFlutterApp> createState() => _LoginFlutterAppState();
+}
+
+class _LoginFlutterAppState extends State<LoginFlutterApp> {
+  GoRouter? _router;
+
+  @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
     final themeProvider = context.watch<ThemeProvider>();
     final localeProvider = context.watch<LocaleProvider>();
+
+    _router ??= createAppRouter(auth);
 
     return MaterialApp.router(
       title: '锦亚澄 ✦ 登录',
@@ -44,7 +55,7 @@ class LoginFlutterApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      routerConfig: createAppRouter(),
+      routerConfig: _router!,
     );
   }
 }

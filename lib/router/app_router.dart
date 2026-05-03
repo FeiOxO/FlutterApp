@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import '../ui/features/auth/view_models/auth_provider.dart';
 import '../ui/features/auth/views/login_screen.dart';
 import '../ui/features/auth/views/register_screen.dart';
@@ -9,9 +8,10 @@ import '../ui/features/dashboard/views/dashboard_screen.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-GoRouter createAppRouter() {
+GoRouter createAppRouter(AuthProvider auth) {
   return GoRouter(
     navigatorKey: _navigatorKey,
+    refreshListenable: auth,
     initialLocation: '/',
     debugLogDiagnostics: false,
     routes: [
@@ -37,13 +37,12 @@ GoRouter createAppRouter() {
       ),
     ],
     redirect: (context, state) {
-      final auth = context.read<AuthProvider>();
       final isLoggedIn = auth.isLoggedIn;
       final isLoading = auth.isLoading;
+      final isLoggingOut = auth.isLoggingOut;
       final location = state.uri.toString();
 
-      // 等待初始会话检查完成
-      if (isLoading) return null;
+      if (isLoading || isLoggingOut) return null;
 
       final isOnAuthPage = location == '/' || location == '/register' || location == '/forgot-password';
 

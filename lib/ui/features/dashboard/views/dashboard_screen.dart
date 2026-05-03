@@ -7,6 +7,7 @@ import '../../../../data/models/image_item.dart';
 import '../../auth/view_models/auth_provider.dart';
 import '../../../core/view_models/theme_provider.dart';
 import '../../../../data/services/image_service.dart';
+import '../../../../data/services/api_client.dart';
 import '../../../core/theme/asumi_theme.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -26,6 +27,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _isLoading = true;
   bool _isUploading = false;
   String? _previewImageUrl;
+  String _mediaBase = ApiClient.defaultBaseUrl;
 
   static const Map<String, String> _collectionLabels = {
     'asumi': '锦亚澄',
@@ -48,6 +50,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
     try {
+      var base = await ApiClient().getBaseUrl();
+      if (base.endsWith('/')) base = base.substring(0, base.length - 1);
+      if (!mounted) return;
       final auth = context.read<AuthProvider>();
       await auth.refreshProfile();
       final results = await Future.wait([
@@ -56,6 +61,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ]);
       if (!mounted) return;
       setState(() {
+        _mediaBase = base;
         _images = results[0] as List<ImageItem>;
         _collections = results[1] as List<({String collection, int count})>;
         _isLoading = false;
@@ -92,7 +98,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     setState(() => _isUploading = true);
     try {
-      final newImage = await _imageService.upload(filePath: file.path);
+      final len = await file.length();
+      if (len > 5 * 1024 * 1024) {
+        if (!mounted) return;
+        setState(() => _isUploading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('图片大小不能超过 5MB'),
+            backgroundColor: AsumiTheme.rose500,
+          ),
+        );
+        return;
+      }
+      final newImage = await _imageService.upload(
+        filePath: file.path,
+        collection: _activeCollection,
+      );
       if (!mounted) return;
       setState(() {
         _images.insert(0, newImage);
@@ -189,8 +210,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
     if (file == null) return;
     try {
+      final len = await file.length();
+      if (len > 5 * 1024 * 1024) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('图片大小不能超过 5MB'),
+            backgroundColor: AsumiTheme.rose500,
+          ),
+        );
+        return;
+      }
       final newImage = await _imageService.upload(filePath: file.path);
-      await auth.setAvatar(newImage.url);
+      await auth.setAvatar(newImage.id);
       if (!mounted) return;
       setState(() => _images.insert(0, newImage));
       _refreshCollections();
@@ -219,7 +251,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final themeProvider = context.watch<ThemeProvider>();
     final isDark = themeProvider.isDark;
 
-    return Scaffold(
+    return Stack(
+      children: [
+        Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -234,7 +268,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             children: [
               // Header
-              _buildHeader(t, auth, themeProvider, isDark),
+              _buildHeader(context, t, auth, themeProvider, isDark),
               Expanded(
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
@@ -292,10 +326,92 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   backgroundColor: AsumiTheme.rose,
                   child: const Icon(Icons.add, color: Colors.white),
                 ),
+        ),
+        if (_previewImageUrl != null) _buildImagePreviewLayer(),
+      ],
     );
   }
 
+  Widget _buildImagePreviewLayer() {
+    final path = _previewImageUrl!;
+    return Positioned.fill(
+      child: Material(
+        color: Colors.black.withValues(alpha: 0.9),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => setState(() => _previewImageUrl = null),
+              ),
+            ),
+            Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4,
+                child: CachedNetworkImage(
+                  imageUrl: _resolveImageUrl(path),
+                  fit: BoxFit.contain,
+                  placeholder: (_, __) => const SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
+                  ),
+                  errorWidget: (_, __, ___) => const Icon(Icons.broken_image, color: Colors.white54, size: 48),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => setState(() => _previewImageUrl = null),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _resolveImageUrl(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    final b = _mediaBase.endsWith('/') ? _mediaBase.substring(0, _mediaBase.length - 1) : _mediaBase;
+    return path.startsWith('/') ? '$b$path' : '$b/$path';
+  }
+
+  Future<void> _confirmLogout(
+    BuildContext context,
+    AuthProvider auth,
+    AppLocalizations t,
+  ) async {
+    if (auth.isLoggingOut) return;
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(t.logout),
+        content: Text(t.logoutConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(t.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AsumiTheme.rose500),
+            child: Text(t.confirm),
+          ),
+        ],
+      ),
+    );
+    if (go != true || !context.mounted) return;
+    await auth.logout();
+  }
+
   Widget _buildHeader(
+    BuildContext context,
     AppLocalizations t,
     AuthProvider auth,
     ThemeProvider themeProvider,
@@ -359,22 +475,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(width: 8),
           // Logout
           GestureDetector(
-            onTap: () => auth.logout(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: AsumiTheme.rose.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.logout, size: 16, color: AsumiTheme.rose),
-                  const SizedBox(width: 4),
-                  Text(
-                    t.logout,
-                    style: const TextStyle(fontSize: 13, color: AsumiTheme.rose, fontWeight: FontWeight.w500),
-                  ),
-                ],
+            onTap: auth.isLoggingOut ? null : () => _confirmLogout(context, auth, t),
+            child: Opacity(
+              opacity: auth.isLoggingOut ? 0.55 : 1,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AsumiTheme.rose.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    if (auth.isLoggingOut)
+                      const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AsumiTheme.rose,
+                        ),
+                      )
+                    else
+                      const Icon(Icons.logout, size: 16, color: AsumiTheme.rose),
+                    const SizedBox(width: 6),
+                    Text(
+                      auth.isLoggingOut ? t.commonLoading : t.logout,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AsumiTheme.rose,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -415,7 +548,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 image: user?.avatar != null
                     ? DecorationImage(
                         image: CachedNetworkImageProvider(
-                          '${_getBaseUrl()}${user!.avatar}',
+                          _resolveImageUrl(user!.avatar!),
                         ),
                         fit: BoxFit.cover,
                       )
@@ -638,7 +771,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // Image
             Expanded(
               child: CachedNetworkImage(
-                imageUrl: '${_getBaseUrl()}${image.url}',
+                imageUrl: _resolveImageUrl(image.url),
                 fit: BoxFit.cover,
                 placeholder: (_, __) => Container(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
@@ -678,7 +811,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   GestureDetector(
                     onTap: () async {
                       try {
-                        await context.read<AuthProvider>().setAvatar(image.url);
+                        await context.read<AuthProvider>().setAvatar(image.id);
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(t.setAsAvatar), backgroundColor: AsumiTheme.emerald400),
@@ -705,7 +838,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _showCollectionPicker(ImageItem image, AppLocalizations t) async {
-    final collection = await showDialog<String>(
+    final picked = await showDialog<String?>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -718,7 +851,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ListTile(
                 title: Text(t.noCategory),
                 leading: const Icon(Icons.label_off, color: AsumiTheme.lavender),
-                onTap: () => Navigator.of(ctx).pop(null),
+                onTap: () => Navigator.of(ctx).pop(''),
               ),
               ..._collections.map((c) => ListTile(
                     title: Text(_collectionDisplayName(c.collection)),
@@ -737,9 +870,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
     );
-    if (collection != null || image.collection != null) {
-      _updateImageCollection(image, collection);
-    }
+    if (!mounted || picked == null) return;
+    await _updateImageCollection(image, picked.isEmpty ? null : picked);
   }
 
   Future<void> _showDeleteConfirm(ImageItem image, AppLocalizations t) async {
@@ -800,10 +932,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  String _getBaseUrl() {
-    // In production, this would be configurable
-    return 'https://www.feioxo.site';
-  }
 }
 
 class _CollectionTab extends StatelessWidget {

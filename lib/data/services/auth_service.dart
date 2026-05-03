@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import '../models/user.dart';
 import '../models/api_response.dart';
 import 'api_client.dart';
@@ -92,9 +93,30 @@ class AuthService {
     return apiResp.data!;
   }
 
+  Future<User> setAvatar({String? imageId}) async {
+    final response = await _client.dio.put(
+      '/api/auth/avatar',
+      data: {'imageId': imageId},
+    );
+    final apiResp = ApiResponse.fromJson(
+      response.data as Map<String, dynamic>,
+      (d) => User.fromJson(d),
+    );
+    if (!apiResp.success || apiResp.data == null) {
+      throw AuthException(message: apiResp.message);
+    }
+    return apiResp.data!;
+  }
+
   Future<void> logout() async {
     try {
-      await _client.dio.post('/api/auth/logout');
+      await _client.dio.post(
+        '/api/auth/logout',
+        options: Options(
+          sendTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
+      );
     } catch (_) {}
     await _client.clearTokens();
   }

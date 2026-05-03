@@ -61,6 +61,9 @@ class GenLocalizationsEn extends GenLocalizations {
   String get logout => 'Logout';
 
   @override
+  String get logoutConfirm => 'Sign out of your account?';
+
+  @override
   String get addImage => 'Add Image';
 
   @override

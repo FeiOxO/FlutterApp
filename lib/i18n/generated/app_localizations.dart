@@ -202,6 +202,12 @@ abstract class GenLocalizations {
   /// **'退出'**
   String get logout;
 
+  /// No description provided for @logoutConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确定要退出当前账号吗？'**
+  String get logoutConfirm;
+
   /// No description provided for @addImage.
   ///
   /// In zh, this message translates to:

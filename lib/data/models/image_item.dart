@@ -44,7 +44,7 @@ class ImageItem {
     }
     final m = Map<String, dynamic>.from(json);
     try {
-      final url = m['url'] as String?;
+      final url = _readString(m['url']);
       if (url == null || url.isEmpty) {
         throw const FormatException('Failed to parse ImageItem: url');
       }

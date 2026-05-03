@@ -60,6 +60,9 @@ class GenLocalizationsJa extends GenLocalizations {
   String get logout => 'ログアウト';
 
   @override
+  String get logoutConfirm => 'ログアウトしてもよろしいですか？';
+
+  @override
   String get addImage => '画像を追加';
 
   @override

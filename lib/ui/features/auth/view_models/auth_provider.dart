@@ -11,11 +11,13 @@ class AuthProvider extends ChangeNotifier {
 
   User? _user;
   bool _isLoading = false;
+  bool _isLoggingOut = false;
   bool _isLoggedIn = false;
   String? _error;
 
   User? get user => _user;
   bool get isLoading => _isLoading;
+  bool get isLoggingOut => _isLoggingOut;
   bool get isLoggedIn => _isLoggedIn;
   String? get error => _error;
 
@@ -110,10 +112,18 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await _authService.logout();
-    _user = null;
-    _isLoggedIn = false;
+    if (_isLoggingOut) return;
+    _isLoggingOut = true;
+    _error = null;
     notifyListeners();
+    try {
+      await _authService.logout();
+    } finally {
+      _user = null;
+      _isLoggedIn = false;
+      _isLoggingOut = false;
+      notifyListeners();
+    }
   }
 
   Future<void> refreshProfile() async {
@@ -123,10 +133,9 @@ class AuthProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  Future<void> setAvatar(String? avatarUrl) async {
-    final u = _user;
-    if (u == null) return;
-    _user = u.copyWith(avatar: avatarUrl);
+  Future<void> setAvatar(String? imageId) async {
+    if (_user == null) return;
+    _user = await _authService.setAvatar(imageId: imageId);
     notifyListeners();
   }
 
