@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../data/models/user.dart';
@@ -58,13 +59,15 @@ class AuthProvider extends ChangeNotifier {
         username: username,
         password: password,
       );
-      await _apiClient.setToken(result.token);
-      await _apiClient.setRefreshToken(result.refreshToken);
-      await _saveLoginTime();
       _user = result.user;
       _isLoggedIn = true;
       _isLoading = false;
       notifyListeners();
+
+      // 后台写入存储，不阻塞界面跳转
+      unawaited(_apiClient.setToken(result.token));
+      unawaited(_apiClient.setRefreshToken(result.refreshToken));
+      unawaited(_saveLoginTime());
       return true;
     } on AuthException catch (e) {
       _error = e.message;
