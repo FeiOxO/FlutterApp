@@ -92,10 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     setState(() => _isUploading = true);
     try {
-      final newImage = await _imageService.upload(
-        filePath: file.path,
-        collection: _activeCollection,
-      );
+      final newImage = await _imageService.upload(filePath: file.path);
       if (!mounted) return;
       setState(() {
         _images.insert(0, newImage);
@@ -193,7 +190,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (file == null) return;
     try {
       final newImage = await _imageService.upload(filePath: file.path);
-      await auth.setAvatar(newImage.id);
+      await auth.setAvatar(newImage.url);
       if (!mounted) return;
       setState(() => _images.insert(0, newImage));
       _refreshCollections();
@@ -681,7 +678,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   GestureDetector(
                     onTap: () async {
                       try {
-                        await context.read<AuthProvider>().setAvatar(image.id);
+                        await context.read<AuthProvider>().setAvatar(image.url);
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(t.setAsAvatar), backgroundColor: AsumiTheme.emerald400),

@@ -7,45 +7,23 @@ class ImageService {
   final ApiClient _client = ApiClient();
 
   Future<List<ImageItem>> getImages({String? collection}) async {
-    final queryParams = <String, dynamic>{};
-    if (collection != null && collection.isNotEmpty) {
-      queryParams['collection'] = collection;
-    }
-    final response = await _client.dio.get(
-      '/api/images',
-      queryParameters: queryParams.isNotEmpty ? queryParams : null,
-    );
+    final response = await _client.dio.get('/api/images');
     final apiResp = ApiResponse.fromJson(
       response.data as Map<String, dynamic>,
-      (d) => (d as List).map((e) => ImageItem.fromJson(e as Map<String, dynamic>)).toList(),
+      (d) => (d as List).map((e) => ImageItem.fromJson(e)).toList(),
     );
     if (!apiResp.success) throw ImageException(message: apiResp.message);
     return apiResp.data as List<ImageItem>;
   }
 
   Future<List<({String collection, int count})>> getCollections() async {
-    final response = await _client.dio.get('/api/images/collections');
-    final apiResp = ApiResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      (d) => (d as List).map((e) {
-        final m = e as Map<String, dynamic>;
-        return (collection: m['collection'] as String, count: m['count'] as int);
-      }).toList(),
-    );
-    if (!apiResp.success) throw ImageException(message: apiResp.message);
-    return apiResp.data as List<({String collection, int count})>;
+    return [];
   }
 
-  Future<ImageItem> upload({
-    required String filePath,
-    String? collection,
-  }) async {
+  Future<ImageItem> upload({required String filePath}) async {
     final formData = FormData.fromMap({
       'file': await MultipartFile.fromFile(filePath),
     });
-    if (collection != null) {
-      formData.fields.add(MapEntry('collection', collection));
-    }
     final response = await _client.dio.post(
       '/api/images/upload',
       data: formData,
@@ -56,23 +34,16 @@ class ImageService {
     );
     final apiResp = ApiResponse.fromJson(
       response.data as Map<String, dynamic>,
-      (d) => ImageItem.fromJson(d as Map<String, dynamic>),
+      (d) => ImageItem.fromJson(d),
     );
     if (!apiResp.success) throw ImageException(message: apiResp.message);
     return apiResp.data!;
   }
 
   Future<ImageItem> updateCollection(String imageId, String? collection) async {
-    final response = await _client.dio.patch(
-      '/api/images/$imageId/collection',
-      data: {'collection': collection},
+    throw ImageException(
+      message: '当前服务端未提供图集分类接口（无 PATCH /api/images/:id/collection）',
     );
-    final apiResp = ApiResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      (d) => ImageItem.fromJson(d as Map<String, dynamic>),
-    );
-    if (!apiResp.success) throw ImageException(message: apiResp.message);
-    return apiResp.data!;
   }
 
   Future<void> delete(String imageId) async {

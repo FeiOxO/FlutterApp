@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Release 构建不会合并 debug/profile 中的权限，必须在 main 中声明 -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="login_flutter"
         android:name="${applicationName}"

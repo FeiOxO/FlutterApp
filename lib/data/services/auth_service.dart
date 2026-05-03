@@ -2,6 +2,12 @@ import '../models/user.dart';
 import '../models/api_response.dart';
 import 'api_client.dart';
 
+String? _readString(dynamic v) {
+  if (v == null) return null;
+  if (v is String) return v;
+  return v.toString();
+}
+
 class AuthService {
   final ApiClient _client = ApiClient();
 
@@ -24,10 +30,33 @@ class AuthService {
       );
     }
     final data = apiResp.data!;
-    final token = data['token'] as String;
-    final refreshToken = data['refreshToken'] as String;
-    final user = User.fromJson(data['user'] as Map<String, dynamic>);
-    return (token: token, refreshToken: refreshToken, user: user);
+    final token = _readString(
+      data['token'] ?? data['accessToken'] ?? data['access_token'],
+    );
+    final refreshToken = _readString(
+      data['refreshToken'] ?? data['refresh_token'],
+    );
+    final userRaw = data['user'];
+    Map<String, dynamic>? userMap;
+    if (userRaw is Map) {
+      userMap = Map<String, dynamic>.from(userRaw);
+    } else if (data['id'] != null && data['username'] != null) {
+      userMap = Map<String, dynamic>.from(data)
+        ..remove('token')
+        ..remove('accessToken')
+        ..remove('access_token')
+        ..remove('refreshToken')
+        ..remove('refresh_token');
+    }
+    if (token == null || userMap == null) {
+      throw AuthException(message: '登录响应格式不正确');
+    }
+    final user = User.fromJson(userMap);
+    return (
+      token: token,
+      refreshToken: refreshToken ?? '',
+      user: user,
+    );
   }
 
   Future<User> register({
@@ -42,7 +71,7 @@ class AuthService {
     });
     final apiResp = ApiResponse.fromJson(
       response.data as Map<String, dynamic>,
-      (d) => User.fromJson(d as Map<String, dynamic>),
+      (d) => User.fromJson(d),
     );
     if (!apiResp.success) {
       throw AuthException(
@@ -57,19 +86,7 @@ class AuthService {
     final response = await _client.dio.get('/api/auth/me');
     final apiResp = ApiResponse.fromJson(
       response.data as Map<String, dynamic>,
-      (d) => User.fromJson(d as Map<String, dynamic>),
-    );
-    if (!apiResp.success) throw AuthException(message: apiResp.message);
-    return apiResp.data!;
-  }
-
-  Future<User> setAvatar(String? imageId) async {
-    final response = await _client.dio.put('/api/auth/avatar', data: {
-      'imageId': imageId,
-    });
-    final apiResp = ApiResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      (d) => User.fromJson(d as Map<String, dynamic>),
+      (d) => User.fromJson(d),
     );
     if (!apiResp.success) throw AuthException(message: apiResp.message);
     return apiResp.data!;
@@ -88,7 +105,14 @@ class AuthService {
     });
     final apiResp = ApiResponse.fromJson(
       response.data as Map<String, dynamic>,
-      (d) => (d as Map<String, dynamic>)['token'] as String,
+      (d) {
+        final m = d is Map ? Map<String, dynamic>.from(d) : null;
+        final t = _readString(m?['token'] ?? m?['accessToken']);
+        if (t == null) {
+          throw AuthException(message: '刷新响应格式不正确');
+        }
+        return t;
+      },
     );
     if (!apiResp.success) throw AuthException(message: apiResp.message);
     return apiResp.data!;

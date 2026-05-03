@@ -19,30 +19,53 @@ class ImageItem {
     this.createdAt,
   });
 
-  factory ImageItem.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        'id': String id,
-        'user_id': String? userId,
-        'filename': String? filename,
-        'original_name': String? originalName,
-        'url': String url,
-        'is_default': bool? isDefault,
-        'collection': String? collection,
-        'created_at': String? createdAtStr,
-      } =>
-        ImageItem(
-          id: id,
-          userId: userId ?? '',
-          filename: filename ?? '',
-          originalName: originalName ?? '',
-          url: url,
-          isDefault: isDefault ?? false,
-          collection: collection,
-          createdAt: createdAtStr != null ? DateTime.tryParse(createdAtStr) : null,
-        ),
-      _ => throw const FormatException('Failed to parse ImageItem'),
-    };
+  static String _readId(dynamic v) {
+    if (v == null) throw const FormatException('Failed to parse ImageItem: id');
+    if (v is String) return v;
+    if (v is num) return v.toString();
+    return v.toString();
+  }
+
+  static String? _readString(dynamic v) {
+    if (v == null) return null;
+    if (v is String) return v;
+    return v.toString();
+  }
+
+  static bool _readBool(dynamic v) {
+    if (v is bool) return v;
+    if (v is num) return v != 0;
+    return false;
+  }
+
+  factory ImageItem.fromJson(Object? json) {
+    if (json is! Map) {
+      throw const FormatException('Failed to parse ImageItem');
+    }
+    final m = Map<String, dynamic>.from(json);
+    try {
+      final url = m['url'] as String?;
+      if (url == null || url.isEmpty) {
+        throw const FormatException('Failed to parse ImageItem: url');
+      }
+      final createdStr =
+          m['created_at'] as String? ?? m['createdAt'] as String?;
+      return ImageItem(
+        id: _readId(m['id']),
+        userId: _readString(m['user_id'] ?? m['userId']) ?? '',
+        filename: _readString(m['filename']) ?? '',
+        originalName:
+            _readString(m['original_name'] ?? m['originalName']) ?? '',
+        url: url,
+        isDefault: _readBool(m['is_default'] ?? m['isDefault']),
+        collection: _readString(m['collection']),
+        createdAt: createdStr != null ? DateTime.tryParse(createdStr) : null,
+      );
+    } on FormatException {
+      rethrow;
+    } catch (_) {
+      throw const FormatException('Failed to parse ImageItem');
+    }
   }
 
   Map<String, dynamic> toJson() => {

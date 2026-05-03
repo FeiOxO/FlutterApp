@@ -120,13 +120,11 @@ class AuthProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  Future<void> setAvatar(String? imageId) async {
-    try {
-      _user = await _authService.setAvatar(imageId);
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
+  Future<void> setAvatar(String? avatarUrl) async {
+    final u = _user;
+    if (u == null) return;
+    _user = u.copyWith(avatar: avatarUrl);
+    notifyListeners();
   }
 
   Future<void> forgotPassword(String email) async {
