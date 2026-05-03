@@ -38,8 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
-    if (!success) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    if (success) {
+      context.go('/dashboard');
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(auth.error ?? '登录失败'),
           backgroundColor: AsumiTheme.rose500,
