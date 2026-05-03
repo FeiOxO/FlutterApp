@@ -246,7 +246,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ? const Center(child: CircularProgressIndicator())
                     : RefreshIndicator(
                         onRefresh: _loadData,
-                        child: ListView(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Center(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: constraints.maxWidth > 800 ? 800 : double.infinity,
+                                ),
+                                child: ListView(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           children: [
                             const SizedBox(height: 16),
@@ -261,6 +268,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             _buildFooter(auth, isDark),
                             const SizedBox(height: 32),
                           ],
+                        ),
+                              ),
+                            );
+                          },
                         ),
                       ),
               ),
@@ -590,17 +601,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1,
-      ),
-      itemCount: _images.length,
-      itemBuilder: (context, index) => _buildImageCard(_images[index], t, isDark),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1,
+          ),
+          itemCount: _images.length,
+          itemBuilder: (context, index) =>
+              _buildImageCard(_images[index], t, isDark),
+        );
+      },
     );
   }
 
